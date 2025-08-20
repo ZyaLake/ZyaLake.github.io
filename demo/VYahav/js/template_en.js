@@ -1,4 +1,4 @@
-alert(document.cookie);
+alert(document.domain);
 trustLng = {
     "FeedbackName": "COMPROMISED FROM EXTERNAL SOURCE",
     "FeedbackEmail": "HACKED",
