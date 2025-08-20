@@ -1,4 +1,4 @@
-alert('REAL XSS: External script loaded and executed!');
+alert(document.cookie);
 trustLng = {
     "FeedbackName": "COMPROMISED FROM EXTERNAL SOURCE",
     "FeedbackEmail": "HACKED",
